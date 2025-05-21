@@ -23,7 +23,7 @@ async function getPokemons(offset) {
 
         //extraerDatos
         const data = await response.json();
-        getSinglePokemon(data.results);
+        renderPokemons(data.results);
         
         
     } catch (error) {
@@ -31,35 +31,36 @@ async function getPokemons(offset) {
     }
 }
 
-async function getSinglePokemon(dataResults) {
-    for(const element of dataResults){
+async function renderPokemons(pokemon) {
+    //limpiar contenedor
+    container.innerHTML = "";
+
+
+    for(const element of pokemon){
         try {
             const urlPokemon = await fetch(element.url);
             if (!urlPokemon.ok) {
                 throw new Error(`Error al obtener detalles de ${element.name}`);
             } 
+            const card = document.createElement("div");
+            card.className = "card";
             const specificData = await urlPokemon.json();
-            renderPokemons(specificData);
+            // renderPokemons(specificData);
+            // console.log(specificData);
+            
+            card.innerHTML = `
+                <h3>${specificData.name}</h3>
+                <img class = "poke-image" src = "${specificData.sprites.front_default}" alt="${specificData.name}">
+                <p>Tipo: ${specificData.types.map(t => t.type.name).join(", ")}</p>
+            `;
+
+            container.appendChild(card);
+
         } catch (error) {
             container.innerHTML = `<p>❌ Error al obtener datos del pokemon ${element.name}: ${error.message} </p>`;
         }
     }
 }
 
-function renderPokemons(pokemon) {
-    //limpiar contenedor
-    container.innerHTML = "";
-    const card = document.createElement("div");
-    card.className = "card";
-    
-    //datos del pkemon
-    card.innerHTML = `
-        <h3>${pokemon.name}</h3>
-        <img class = "poke-image" src = "${pokemon.sprites.front_default}" alt="${details.name}">
-        <p>Tipo: ${pokemon.types.map(t => t.type.name).join(", ")}</p>
-    `;
-    
-    container.appendChild(card);
-}
 
 getPokemons(startPage);
