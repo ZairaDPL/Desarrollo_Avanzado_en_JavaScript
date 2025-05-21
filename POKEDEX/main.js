@@ -62,5 +62,18 @@ async function renderPokemons(pokemon) {
     }
 }
 
+// Eventos para los botones
+previousButton.addEventListener("click", () => {
+    if (startPage >= endPage) {
+        startPage -= endPage;
+        getPokemons(startPage);
+    }
+});
+
+nextButton.addEventListener("click", () => {
+    startPage += endPage;
+    getPokemons(startPage);
+});
+
 
 getPokemons(startPage);
